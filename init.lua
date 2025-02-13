@@ -1,3 +1,6 @@
+-- share clipboard with OS
+vim.opt.clipboard:append('unnamedplus,unnamed')
+
 vim.api.nvim_create_user_command(
   'InitLua',
   function()
