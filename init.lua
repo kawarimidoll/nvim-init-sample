@@ -60,3 +60,39 @@ create_autocmd('BufWritePre', {
     end
   end
 })
+
+vim.keymap.set({ 'n', 'x' }, 'x', '"_d', { desc = 'delete using blackhole register' })
+vim.keymap.set('n', 'X', '"_D', { desc = 'delete using blackhole register' })
+vim.keymap.set('o', 'x', 'd', { desc = 'delete using blackhole register' })
+
+vim.keymap.set('n', 'p', 'p`]', { desc = 'paste and move the cursor to the end the pasted region' })
+vim.keymap.set('n', 'P', 'P`]', { desc = 'paste and move the cursor to the end the pasted region' })
+
+vim.keymap.set('x', 'p', 'P', { desc = 'paste without change register' })
+vim.keymap.set('x', 'P', 'p', { desc = 'paste with change register' })
+
+vim.keymap.set('c', '<c-n>', function()
+  return vim.fn.wildmenumode() == 1 and '<c-n>' or '<down>'
+end, { expr = true, desc = 'Select next' })
+vim.keymap.set('c', '<c-p>', function()
+  return vim.fn.wildmenumode() == 1 and '<c-p>' or '<up>'
+end, { expr = true, desc = 'Select previous' })
+vim.keymap.set('c', '<c-b>', '<left>', { desc = 'Emacs like left' })
+vim.keymap.set('c', '<c-f>', '<right>', { desc = 'Emacs like right' })
+vim.keymap.set('c', '<c-a>', '<home>', { desc = 'Emacs like home' })
+vim.keymap.set('c', '<c-e>', '<end>', { desc = 'Emacs like end' })
+vim.keymap.set('c', '<c-h>', '<bs>', { desc = 'Emacs like bs', remap = true })
+vim.keymap.set('c', '<c-d>', '<del>', { desc = 'Emacs like del' })
+
+vim.keymap.set('n', '<space>w', '<cmd>write<cr>', { desc = 'write' })
+vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = 'Source current script' })
+
+-- https://zenn.dev/vim_jp/articles/2024-10-07-vim-insert-uppercase
+vim.keymap.set('i', '<c-l>', function()
+  local col = vim.fn.getpos('.')[3]
+  local substring = vim.fn.getline('.'):sub(1, col - 1)
+  local result = vim.fn.matchstr(substring, [[\v<(\k(<)@!)*$]])
+  return '<c-w>' .. result:upper()
+end, { expr = true, desc = 'Capitalize word before cursor' })
+
+vim.keymap.set('n', 'q:', '<nop>', { desc = 'disable cmdwin' })
