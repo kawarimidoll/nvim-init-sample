@@ -133,3 +133,9 @@ now(function()
     },
   })
 end)
+
+later(function()
+  add('vim-jp/vimdoc-ja')
+  -- Prefer Japanese as the help language
+  vim.opt.helplang:prepend('ja')
+end)
