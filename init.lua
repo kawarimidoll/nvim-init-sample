@@ -96,3 +96,6 @@ vim.keymap.set('i', '<c-l>', function()
 end, { expr = true, desc = 'Capitalize word before cursor' })
 
 vim.keymap.set('n', 'q:', '<nop>', { desc = 'disable cmdwin' })
+
+vim.cmd.cnoreabbrev('qw wq')
+vim.cmd.cnoreabbrev('lup lua<space>=')
