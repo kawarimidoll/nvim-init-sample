@@ -159,3 +159,10 @@ now(function()
     MiniMisc.zoom(0, {})
   end, { desc = 'Zoom current buffer' })
 end)
+
+now(function()
+  require('mini.notify').setup()
+  vim.notify = require('mini.notify').make_notify({
+    ERROR = { duration = 10000 }
+  })
+end)
