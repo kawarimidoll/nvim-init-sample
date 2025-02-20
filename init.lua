@@ -139,3 +139,9 @@ later(function()
   -- Prefer Japanese as the help language
   vim.opt.helplang:prepend('ja')
 end)
+
+now(function()
+  require('mini.statusline').setup()
+  vim.opt.laststatus = 3
+  vim.opt.cmdheight = 0
+end)
