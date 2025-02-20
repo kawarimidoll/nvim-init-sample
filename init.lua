@@ -145,3 +145,17 @@ now(function()
   vim.opt.laststatus = 3
   vim.opt.cmdheight = 0
 end)
+
+now(function()
+  require('mini.misc').setup()
+  MiniMisc.setup_restore_cursor()
+
+  -- Zoom command
+  vim.api.nvim_create_user_command('Zoom', function()
+    MiniMisc.zoom(0, {})
+  end, { desc = 'Zoom current buffer' })
+  -- Zoom keymap
+  vim.keymap.set('n', '<space>z', function()
+    MiniMisc.zoom(0, {})
+  end, { desc = 'Zoom current buffer' })
+end)
