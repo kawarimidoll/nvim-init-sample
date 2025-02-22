@@ -304,3 +304,81 @@ later(function()
     },
   })
 end)
+
+now(function()
+  add({
+    source = 'neovim/nvim-lspconfig',
+    depends = { 'williamboman/mason.nvim' },
+  })
+
+  ---@diagnostic disable-next-line: missing-fields
+  require('mason').setup({
+    ui = {
+      icons = {
+        package_installed = '✓',
+        package_pending = '➜',
+        package_uninstalled = '✗'
+      }
+    }
+  })
+
+  -- https://eiji.page/blog/neovim-diagnostic-config/
+  vim.diagnostic.config({
+    virtual_text = {
+      format = function(diagnostic)
+        return string.format("%s (%s: %s)", diagnostic.message, diagnostic.source, diagnostic.code)
+      end,
+    },
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = "⛔",
+        [vim.diagnostic.severity.WARN] = "⚠️",
+        [vim.diagnostic.severity.INFO] = "ℹ️",
+        [vim.diagnostic.severity.HINT] = "💡",
+      },
+    },
+  })
+
+  -- :h lsp-attach
+  create_autocmd('LspAttach', {
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if not client then
+        return
+      end
+
+      if client:supports_method('textDocument/formatting') then
+        -- Format the current buffer on save
+        create_autocmd('BufWritePre', {
+          buffer = args.buf,
+          callback = function()
+            vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
+          end,
+        })
+      end
+    end,
+  })
+
+  local lua_opts = {}
+  lua_opts.on_init = function(client)
+    if client.workspace_folders then
+      local path = client.workspace_folders[1].name
+      if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
+        return
+      end
+    end
+    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+      runtime = { version = 'LuaJIT' },
+      workspace = {
+        checkThirdParty = 'Disable',
+        library = vim.list_extend(vim.api.nvim_get_runtime_file('lua', true), {
+          '${3rd}/luv/library',
+          '${3rd}/busted/library',
+          '${3rd}/luassert/library',
+        }),
+      }
+    })
+  end
+  lua_opts.settings = { Lua = {} }
+  require('lspconfig').lua_ls.setup(lua_opts)
+end)
