@@ -382,3 +382,7 @@ now(function()
   lua_opts.settings = { Lua = {} }
   require('lspconfig').lua_ls.setup(lua_opts)
 end)
+
+later(function()
+  add('liangxianzhe/floating-input.nvim')
+end)
