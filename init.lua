@@ -535,3 +535,38 @@ later(function()
 
   vim.keymap.set('n', 'RR', 'R', { desc = 'Replace mode' })
 end)
+
+later(function()
+  require('mini.jump').setup({
+    delay = {
+      idle_stop = 10,
+    },
+  })
+end)
+
+later(function()
+  require('mini.jump2d').setup()
+end)
+
+later(function()
+  local animate = require('mini.animate')
+  animate.setup({
+    cursor = {
+      -- Animate for 100 milliseconds with linear easing
+      timing = animate.gen_timing.linear({ duration = 100, unit = 'total' }),
+
+      -- Animate with shortest line for any cursor move
+      path = animate.gen_path.line({
+        predicate = function() return true end,
+      }),
+    },
+    scroll = {
+      -- Animate for 150 milliseconds with linear easing
+      timing = animate.gen_timing.linear({ duration = 150, unit = 'total' }),
+    },
+  })
+end)
+
+later(function()
+  require('mini.bracketed').setup()
+end)
