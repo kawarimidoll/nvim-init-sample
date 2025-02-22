@@ -386,3 +386,50 @@ end)
 later(function()
   add('liangxianzhe/floating-input.nvim')
 end)
+
+later(function()
+  require('mini.completion').setup()
+  vim.opt.completeopt:append('fuzzy')
+
+  -- helper function
+  local imap_expr = function(lhs, rhs)
+    vim.keymap.set('i', lhs, rhs, { expr = true })
+  end
+
+  -- define keycodes
+  local keys = {
+    cn = vim.keycode('<c-n>'),
+    cp = vim.keycode('<c-p>'),
+    ct = vim.keycode('<c-t>'),
+    cd = vim.keycode('<c-d>'),
+    -- cr = vim.keycode('<cr>'),
+    cr = require('mini.pairs').cr(), -- for `mini.pairs` users
+    cy = vim.keycode('<c-y>'),
+  }
+
+  -- choose by <tab>/<s-tab>
+  imap_expr('<tab>', function()
+    -- popup is visible -> next item
+    -- popup is NOT visible -> add indent
+    return vim.fn.pumvisible() == 1 and keys.cn or keys.ct
+  end)
+  imap_expr('<s-tab>', function()
+    -- popup is visible -> previous item
+    -- popup is NOT visible -> remove indent
+    return vim.fn.pumvisible() == 1 and keys.cp or keys.cd
+  end)
+  -- select by <cr>
+  imap_expr('<cr>', function()
+    if vim.fn.pumvisible() == 0 then
+      -- popup is NOT visible -> insert newline
+      return keys.cr
+    end
+    local item_selected = vim.fn.complete_info()['selected'] ~= -1
+    if item_selected then
+      -- popup is visible and item is selected -> select item
+      return keys.cy
+    end
+    -- popup is visible but item is NOT selected -> hide popup and insert newline
+    return keys.cy .. keys.cr
+  end)
+end)
