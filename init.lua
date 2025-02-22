@@ -529,3 +529,9 @@ later(function()
 
   vim.keymap.set({ 'n', 'x' }, '<space>gs', MiniGit.show_at_cursor, { desc = 'Show at cursor' })
 end)
+
+later(function()
+  require('mini.operators').setup({ replace = { prefix = 'R' } })
+
+  vim.keymap.set('n', 'RR', 'R', { desc = 'Replace mode' })
+end)
