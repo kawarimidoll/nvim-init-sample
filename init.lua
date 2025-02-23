@@ -20,6 +20,7 @@ vim.opt.wildmode = { 'longest', 'full' }
 -- set window title
 vim.opt.title = true
 
+require('bool_fn')
 require('user_command')
 
 -- augroup for this config file
@@ -38,7 +39,7 @@ create_autocmd('BufWritePre', {
   callback = function(event)
     local dir = vim.fs.dirname(event.file)
     local force = vim.v.cmdbang == 1
-    if vim.fn.isdirectory(dir) == 0
+    if not vim.bool_fn.isdirectory(dir)
         and (force or vim.fn.confirm('"' .. dir .. '" does not exist. Create?', "&Yes\n&No") == 1) then
       vim.fn.mkdir(vim.fn.iconv(dir, vim.opt.encoding:get(), vim.opt.termencoding:get()), 'p')
     end
@@ -56,10 +57,10 @@ vim.keymap.set('x', 'p', 'P', { desc = 'paste without change register' })
 vim.keymap.set('x', 'P', 'p', { desc = 'paste with change register' })
 
 vim.keymap.set('c', '<c-n>', function()
-  return vim.fn.wildmenumode() == 1 and '<c-n>' or '<down>'
+  return vim.bool_fn.wildmenumode() and '<c-n>' or '<down>'
 end, { expr = true, desc = 'Select next' })
 vim.keymap.set('c', '<c-p>', function()
-  return vim.fn.wildmenumode() == 1 and '<c-p>' or '<up>'
+  return vim.bool_fn.wildmenumode() and '<c-p>' or '<up>'
 end, { expr = true, desc = 'Select previous' })
 vim.keymap.set('c', '<c-b>', '<left>', { desc = 'Emacs like left' })
 vim.keymap.set('c', '<c-f>', '<right>', { desc = 'Emacs like right' })
@@ -392,16 +393,16 @@ later(function()
   imap_expr('<tab>', function()
     -- popup is visible -> next item
     -- popup is NOT visible -> add indent
-    return vim.fn.pumvisible() == 1 and keys.cn or keys.ct
+    return vim.bool_fn.pumvisible() and keys.cn or keys.ct
   end)
   imap_expr('<s-tab>', function()
     -- popup is visible -> previous item
     -- popup is NOT visible -> remove indent
-    return vim.fn.pumvisible() == 1 and keys.cp or keys.cd
+    return vim.bool_fn.pumvisible() and keys.cp or keys.cd
   end)
   -- select by <cr>
   imap_expr('<cr>', function()
-    if vim.fn.pumvisible() == 0 then
+    if not vim.bool_fn.pumvisible() then
       -- popup is NOT visible -> insert newline
       return keys.cr
     end
