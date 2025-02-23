@@ -20,23 +20,7 @@ vim.opt.wildmode = { 'longest', 'full' }
 -- set window title
 vim.opt.title = true
 
-vim.api.nvim_create_user_command(
-  'InitLua',
-  function()
-    vim.cmd.edit(vim.fn.stdpath('config') .. '/init.lua')
-  end,
-  { desc = 'Open init.lua' }
-)
-
-vim.api.nvim_create_user_command(
-  'CopyLastCmd',
-  function()
-    vim.fn.setreg('*', vim.fn.getreg(':'))
-    -- unless vim.opt.clipboard has unnamed
-    -- vim.fn.setreg('', vim.fn.getreg(':'))
-  end,
-  { desc = 'Copy last used command' }
-)
+require('user_command')
 
 -- augroup for this config file
 local augroup = vim.api.nvim_create_augroup('init.lua', {})
@@ -377,28 +361,7 @@ now(function()
     end,
   })
 
-  local lua_opts = {}
-  lua_opts.on_init = function(client)
-    if client.workspace_folders then
-      local path = client.workspace_folders[1].name
-      if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
-        return
-      end
-    end
-    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-      runtime = { version = 'LuaJIT' },
-      workspace = {
-        checkThirdParty = 'Disable',
-        library = vim.list_extend(vim.api.nvim_get_runtime_file('lua', true), {
-          '${3rd}/luv/library',
-          '${3rd}/busted/library',
-          '${3rd}/luassert/library',
-        }),
-      }
-    })
-  end
-  lua_opts.settings = { Lua = {} }
-  require('lspconfig').lua_ls.setup(lua_opts)
+  require('lsp.lua_ls')
 end)
 
 later(function()
