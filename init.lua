@@ -211,7 +211,8 @@ now(function()
   require('mini.sessions').setup()
 
   vim.api.nvim_create_user_command('SessionWrite', function(arg)
-    MiniSessions.write(arg.args)
+    vim.cmd({ cmd = 'argdelete', range = '%' })
+    MiniSessions.write(arg.args ~= '' and arg.args or nil)
   end, { desc = 'Write session', nargs = '?' })
   vim.api.nvim_create_user_command('SessionDelete', function()
     MiniSessions.select('delete')
@@ -387,8 +388,7 @@ later(function()
     cp = vim.keycode('<c-p>'),
     ct = vim.keycode('<c-t>'),
     cd = vim.keycode('<c-d>'),
-    -- cr = vim.keycode('<cr>'),
-    cr = require('mini.pairs').cr(), -- for `mini.pairs` users
+    cr = vim.keycode('<cr>'),
     cy = vim.keycode('<c-y>'),
   }
 
@@ -407,7 +407,8 @@ later(function()
   imap_expr('<cr>', function()
     if not vim.bool_fn.pumvisible() then
       -- popup is NOT visible -> insert newline
-      return keys.cr
+      -- return keys.cr
+      return require('mini.pairs').cr() -- for `mini.pairs` users
     end
     local item_selected = vim.fn.complete_info()['selected'] ~= -1
     if item_selected then
