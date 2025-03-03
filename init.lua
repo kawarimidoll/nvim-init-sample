@@ -211,7 +211,7 @@ now(function()
   require('mini.sessions').setup()
 
   vim.api.nvim_create_user_command('SessionWrite', function(arg)
-    vim.cmd({ cmd = 'argdelete', range = '%' })
+    vim.cmd('%argdelete')
     MiniSessions.write(arg.args ~= '' and arg.args or nil)
   end, { desc = 'Write session', nargs = '?' })
   vim.api.nvim_create_user_command('SessionDelete', function()
