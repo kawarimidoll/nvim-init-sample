@@ -500,7 +500,10 @@ later(function()
 end)
 
 later(function()
-  require('mini.operators').setup({ replace = { prefix = 'R' } })
+  require('mini.operators').setup({
+    exchange = { prefix = 'g/' },
+    replace = { prefix = 'R' },
+  })
 
   vim.keymap.set('n', 'RR', 'R', { desc = 'Replace mode' })
 end)
