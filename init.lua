@@ -235,6 +235,20 @@ end)
 
 later(function()
   require('mini.surround').setup()
+
+  create_autocmd('FileType', {
+    pattern = 'javascript,typescript,javascriptreact,typescriptreact',
+    callback = function()
+      vim.b.minisurround_config = {
+        custom_surroundings = {
+          s = {
+            input = { '${().-()}' },
+            output = { left = '${', right = '}' },
+          },
+        },
+      }
+    end
+  })
 end)
 
 later(function()
@@ -248,6 +262,17 @@ later(function()
       N = gen_ai_spec.number(),
       J = { { '()%d%d%d%d%-%d%d%-%d%d()', '()%d%d%d%d%/%d%d%/%d%d()' } }
     },
+  })
+
+  create_autocmd('FileType', {
+    pattern = 'javascript,typescript,javascriptreact,typescriptreact',
+    callback = function()
+      vim.b.miniai_config = {
+        custom_textobjects = {
+          s = { '${().-()}' },
+        },
+      }
+    end
   })
 end)
 
