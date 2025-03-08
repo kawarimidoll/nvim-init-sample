@@ -640,6 +640,50 @@ later(function()
   })
 end)
 
+later(function()
+  vim.keymap.set('n', '?', '<cmd>silent vimgrep//gj%|copen<cr>',
+    { desc = 'Populate latest search result to quickfix list' })
+
+  -- use rg for external-grep
+  vim.opt.grepprg =
+  [[rg --vimgrep --trim --hidden --glob=!.git --glob='!*.lock' --glob='!*-lock.json']]
+  vim.opt.grepformat = '%f:%l:%c:%m'
+
+  -- original: `:NewGrep` in :help grep
+  vim.api.nvim_create_user_command('Grep', function(arg)
+    local fargs = vim.fn.join(arg.fargs, ' ')
+    local args = {
+      'silent',
+      'grep!',
+      (arg.bang and '--fixed-strings --' or ''),
+      [[']] .. string.gsub(fargs, [[']], [['\'']]) .. [[']],
+    }
+    vim.cmd.execute(vim.fn.string(table.concat(args, ' ')))
+    local size = vim.fn.getqflist({ size = true }).size
+    if size > 0 then
+      vim.cmd.copen()
+    else
+      vim.notify('no matches found', vim.log.levels.WARN)
+      vim.cmd.cclose()
+    end
+  end, { nargs = '+', bang = true, desc = 'Enhounced grep' })
+
+  vim.keymap.set('n', '<space>/', ':Grep ', { desc = 'Grep' })
+  vim.keymap.set('n', '<space>?', ':Grep <c-r><c-w>', { desc = 'Grep current word' })
+end)
+
+later(function()
+  add({ source = 'stevearc/quicker.nvim' })
+  local quicker = require('quicker')
+  vim.keymap.set('n', 'mq', quicker.toggle, { desc = 'Toggle quickfix' })
+  quicker.setup({
+    keys = {
+      { '>', quicker.expand,   desc = 'Expand quickfix content' },
+      { '<', quicker.collapse, desc = 'Collapse quickfix content' },
+    },
+  })
+end)
+
 now(function()
   local default_rtp = vim.opt.runtimepath:get()
   vim.opt.runtimepath:remove(vim.env.VIMRUNTIME)
