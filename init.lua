@@ -234,3 +234,7 @@ later(function()
     { desc = 'Trim trailing space and last blank lines' }
   )
 end)
+
+now(function()
+  require('mini.starter').setup()
+end)
