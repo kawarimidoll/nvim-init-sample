@@ -133,3 +133,31 @@ later(function()
   -- Prefer Japanese as the help language
   vim.opt.helplang:prepend('ja')
 end)
+
+now(function()
+  require('mini.statusline').setup()
+  vim.opt.laststatus = 3
+  vim.opt.cmdheight = 0
+
+  -- ref: https://github.com/Shougo/shougo-s-github/blob/2f1c9acacd3a341a1fa40823761d9593266c65d4/vim/rc/vimrc#L47-L49
+  create_autocmd({ 'RecordingEnter', 'CmdlineEnter' }, {
+    pattern = '*',
+    callback = function()
+      vim.opt.cmdheight = 1
+    end,
+  })
+  create_autocmd('RecordingLeave', {
+    pattern = '*',
+    callback = function()
+      vim.opt.cmdheight = 0
+    end,
+  })
+  create_autocmd('CmdlineLeave', {
+    pattern = '*',
+    callback = function()
+      if vim.fn.reg_recording() == '' then
+        vim.opt.cmdheight = 0
+      end
+    end,
+  })
+end)
