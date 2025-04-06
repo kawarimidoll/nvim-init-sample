@@ -427,3 +427,19 @@ later(function()
     },
   })
 end)
+
+later(function()
+  require('mini.tabline').setup()
+end)
+
+later(function()
+  require('mini.bufremove').setup()
+
+  vim.api.nvim_create_user_command(
+    'Bufdelete',
+    function()
+      MiniBufremove.delete()
+    end,
+    { desc = 'Remove buffer' }
+  )
+end)
