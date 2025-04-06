@@ -116,3 +116,14 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 now(function()
   require('mini.icons').setup()
 end)
+
+now(function()
+  require('mini.basics').setup({
+    options = {
+      extra_ui = true,
+    },
+    mappings = {
+      option_toggle_prefix = 'm',
+    },
+  })
+end)
