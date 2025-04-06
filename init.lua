@@ -443,3 +443,46 @@ later(function()
     { desc = 'Remove buffer' }
   )
 end)
+
+now(function()
+  require('mini.files').setup()
+
+  vim.api.nvim_create_user_command(
+    'Files',
+    function()
+      MiniFiles.open()
+    end,
+    { desc = 'Open file exproler' }
+  )
+  vim.keymap.set('n', '<space>e', '<cmd>Files<cr>', { desc = 'Open file exproler' })
+end)
+
+later(function()
+  require('mini.pick').setup()
+
+  vim.ui.select = MiniPick.ui_select
+
+  vim.keymap.set('n', '<space>f', function()
+    MiniPick.builtin.files({ tool = 'git' })
+  end, { desc = 'mini.pick.files' })
+
+  vim.keymap.set('n', '<space>b', function()
+    local wipeout_cur = function()
+      vim.api.nvim_buf_delete(MiniPick.get_picker_matches().current.bufnr, {})
+    end
+    local buffer_mappings = { wipeout = { char = '<c-d>', func = wipeout_cur } }
+    MiniPick.builtin.buffers({ include_current = false }, { mappings = buffer_mappings })
+  end, { desc = 'mini.pick.buffers' })
+
+  require('mini.visits').setup()
+  vim.keymap.set('n', '<space>h', function()
+    require('mini.extra').pickers.visit_paths()
+  end, { desc = 'mini.extra.visit_paths' })
+
+  vim.keymap.set('c', 'h', function()
+    if vim.fn.getcmdtype() .. vim.fn.getcmdline() == ':h' then
+      return '<c-u>Pick help<cr>'
+    end
+    return 'h'
+  end, { expr = true, desc = 'mini.pick.help' })
+end)
