@@ -83,3 +83,13 @@ vim.keymap.set('n', '<space>q', function()
 end, { desc = 'Quit current tab or window' })
 
 vim.keymap.set('n', 'q:', '<nop>', { desc = 'Disable cmdwin' })
+
+-- abbreviation only for ex-command
+local function abbrev_excmd(lhs, rhs, opts)
+  vim.keymap.set('ca', lhs, function()
+    return vim.fn.getcmdtype() == ':' and rhs or lhs
+  end, vim.tbl_extend('force', { expr = true }, opts))
+end
+
+abbrev_excmd('qw', 'wq', { desc = 'fix typo' })
+abbrev_excmd('lup', 'lua =', { desc = 'lua print' })
