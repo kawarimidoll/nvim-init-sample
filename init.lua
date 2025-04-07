@@ -14,13 +14,7 @@ vim.opt.scrolloff = 3
 -- move the cursor to the previous/next line across the first/last character
 vim.opt.whichwrap = 'b,s,h,l,<,>,[,],~'
 
-vim.api.nvim_create_user_command(
-  'InitLua',
-  function()
-    vim.cmd.edit(vim.fn.stdpath('config') .. '/init.lua')
-  end,
-  { desc = 'Open init.lua' }
-)
+require('user_command')
 
 -- augroup for this config file
 local augroup = vim.api.nvim_create_augroup('init.lua', {})
