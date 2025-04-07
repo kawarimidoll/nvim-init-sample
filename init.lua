@@ -15,6 +15,7 @@ vim.opt.scrolloff = 3
 vim.opt.whichwrap = 'b,s,h,l,<,>,[,],~'
 
 require('user_command')
+require('bool_fn')
 
 -- augroup for this config file
 local augroup = vim.api.nvim_create_augroup('init.lua', {})
@@ -32,7 +33,7 @@ create_autocmd('BufWritePre', {
   callback = function(event)
     local dir = vim.fs.dirname(event.file)
     local force = vim.v.cmdbang == 1
-    if vim.fn.isdirectory(dir) == 0
+    if not vim.bool_fn.isdirectory(dir)
         and (force or vim.fn.confirm('"' .. dir .. '" does not exist. Create?', "&Yes\n&No") == 1) then
       vim.fn.mkdir(vim.fn.iconv(dir, vim.opt.encoding:get(), vim.opt.termencoding:get()), 'p')
     end
@@ -64,10 +65,10 @@ vim.keymap.set('n', '<space>w', '<cmd>write<cr>', { desc = 'Write' })
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = 'Source current script' })
 
 vim.keymap.set('c', '<c-n>', function()
-  return vim.fn.wildmenumode() == 1 and '<c-n>' or '<down>'
+  return vim.bool_fn.wildmenumode() and '<c-n>' or '<down>'
 end, { expr = true, desc = 'Select next' })
 vim.keymap.set('c', '<c-p>', function()
-  return vim.fn.wildmenumode() == 1 and '<c-p>' or '<up>'
+  return vim.bool_fn.wildmenumode() and '<c-p>' or '<up>'
 end, { expr = true, desc = 'Select previous' })
 
 vim.keymap.set('n', '<space>q', function()
@@ -394,17 +395,17 @@ later(function()
   vim.keymap.set('i', '<tab>', function()
     -- popup is visible -> next item
     -- popup is NOT visible -> add indent
-    return vim.fn.pumvisible() == 1 and keys.cn or keys.ct
+    return vim.bool_fn.pumvisible() and keys.cn or keys.ct
   end, { expr = true, desc = 'Select next item if popup is visible' })
   vim.keymap.set('i', '<s-tab>', function()
     -- popup is visible -> previous item
     -- popup is NOT visible -> remove indent
-    return vim.fn.pumvisible() == 1 and keys.cp or keys.cd
+    return vim.bool_fn.pumvisible() and keys.cp or keys.cd
   end, { expr = true, desc = 'Select previous item if popup is visible' })
 
   -- complete by <cr>
   vim.keymap.set('i', '<cr>', function()
-    if vim.fn.pumvisible() == 0 then
+    if not vim.bool_fn.pumvisible() then
       -- popup is NOT visible -> insert newline
       return require('mini.pairs').cr()
     end
