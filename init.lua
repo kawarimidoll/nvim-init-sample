@@ -364,6 +364,7 @@ later(function()
       clue.gen_clues.registers({ show_contents = true }),
       clue.gen_clues.z(),
       clue.gen_clues.z(),
+      { mode = 'n', keys = 'mm', desc = '+mini.map' },
     },
   })
 end)
@@ -599,4 +600,21 @@ end)
 
 later(function()
   require('mini.align').setup()
+end)
+
+later(function()
+  local map = require('mini.map')
+  map.setup({
+    integrations = {
+      map.gen_integration.builtin_search(),
+      map.gen_integration.diff(),
+      map.gen_integration.diagnostic(),
+    },
+    symbols = {
+      scroll_line = '▶',
+    }
+  })
+  vim.keymap.set('n', 'mmf', MiniMap.toggle_focus, { desc = 'MiniMap.toggle_focus' })
+  vim.keymap.set('n', 'mms', MiniMap.toggle_side, { desc = 'MiniMap.toggle_side' })
+  vim.keymap.set('n', 'mmt', MiniMap.toggle, { desc = 'MiniMap.toggle' })
 end)
