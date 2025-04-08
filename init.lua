@@ -306,6 +306,53 @@ later(function()
   })
 end)
 
+now(function()
+  local js_like_types = {
+    'javascript',
+    'javascript.jsx',
+    'javascriptreact',
+    'typescript',
+    'typescript.tsx',
+    'typescriptreact'
+  }
+
+  create_autocmd('FileType', {
+    pattern = js_like_types,
+    callback = function()
+      -- surround
+      vim.b.minisurround_config =
+          vim.tbl_deep_extend('force', vim.b.minisurround_config or {}, {
+            custom_surroundings = {
+              s = {
+                input = { '${().-()}' },
+                output = { left = '${', right = '}' },
+              },
+              g = {
+                input = { '%f[%w_%.][%w_%.]+%b<>', '^.-<().*()>$' },
+                output = function()
+                  local generics_name = require('mini.surround').user_input('Generics name')
+                  if generics_name == nil then
+                    return nil
+                  end
+                  return { left = generics_name .. '<', right = '>' }
+                end,
+              },
+            },
+          })
+
+      -- ai
+      vim.b.miniai_config =
+          vim.tbl_deep_extend('force', vim.b.miniai_config or {}, {
+            custom_textobjects = {
+              s = { '${().-()}' },
+              g = { '%f[%w_%.][%w_%.]+%b<>', '^.-<().*()>$' },
+            },
+          })
+    end,
+    desc = 'Local setting for js-like filetypes'
+  })
+end)
+
 later(function()
   local function mode_nx(keys)
     return { mode = 'n', keys = keys }, { mode = 'x', keys = keys }
