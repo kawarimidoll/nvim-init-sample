@@ -1,3 +1,6 @@
+-- cache init.lua
+vim.loader.enable()
+
 -- share clipboard with OS
 vim.opt.clipboard:append('unnamedplus,unnamed')
 
@@ -566,4 +569,16 @@ later(function()
   vim.keymap.set('n', 'mmf', MiniMap.toggle_focus, { desc = 'MiniMap.toggle_focus' })
   vim.keymap.set('n', 'mms', MiniMap.toggle_side, { desc = 'MiniMap.toggle_side' })
   vim.keymap.set('n', 'mmt', MiniMap.toggle, { desc = 'MiniMap.toggle' })
+end)
+
+now(function()
+  local default_rtp = vim.opt.runtimepath:get()
+  vim.opt.runtimepath:remove(vim.env.VIMRUNTIME)
+  create_autocmd("SourcePre", {
+    pattern = "*/plugin/*",
+    once = true,
+    callback = function()
+      vim.opt.runtimepath = default_rtp
+    end
+  })
 end)
