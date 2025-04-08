@@ -618,6 +618,39 @@ later(function()
   vim.keymap.set('n', 'mmt', MiniMap.toggle, { desc = 'MiniMap.toggle' })
 end)
 
+later(function()
+  -- avoid error
+  vim.treesitter.start = (function(wrapped)
+    return function(bufnr, lang)
+      lang = lang or vim.fn.getbufvar(bufnr or '', '&filetype')
+      pcall(wrapped, bufnr, lang)
+    end
+  end)(vim.treesitter.start)
+
+  add({
+    source = 'https://github.com/nvim-treesitter/nvim-treesitter',
+    hooks = {
+      post_checkout = function()
+        vim.cmd.TSUpdate()
+      end
+    },
+  })
+  ---@diagnostic disable-next-line: missing-fields
+  require('nvim-treesitter.configs').setup({
+    -- auto-install parsers
+    ensure_installed = { 'lua', 'vim', 'tsx' },
+    highlight = { enable = true },
+  })
+end)
+
+later(function()
+  add({
+    source = 'https://github.com/JoosepAlviste/nvim-ts-context-commentstring',
+    depends = { 'nvim-treesitter/nvim-treesitter' },
+  })
+  require('ts_context_commentstring').setup({})
+end)
+
 now(function()
   local default_rtp = vim.opt.runtimepath:get()
   vim.opt.runtimepath:remove(vim.env.VIMRUNTIME)
