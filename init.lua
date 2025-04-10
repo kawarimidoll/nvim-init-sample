@@ -686,6 +686,33 @@ later(function()
   vim.keymap.set('n', '<space>?', ':Grep <c-r><c-w>', { desc = 'Grep current word' })
 end)
 
+later(function()
+  add({ source = 'https://github.com/stevearc/quicker.nvim' })
+  local quicker = require('quicker')
+  vim.keymap.set('n', 'mq', function()
+    quicker.toggle()
+    quicker.refresh()
+  end, { desc = 'Toggle quickfix' })
+  quicker.setup({
+    keys = {
+      {
+        '>',
+        function()
+          require('quicker').expand({ before = 2, after = 2, add_to_existing = true })
+        end,
+        desc = 'Expand quickfix context',
+      },
+      {
+        '<',
+        function()
+          require('quicker').collapse()
+        end,
+        desc = 'Collapse quickfix context',
+      },
+    },
+  })
+end)
+
 now(function()
   local default_rtp = vim.opt.runtimepath:get()
   vim.opt.runtimepath:remove(vim.env.VIMRUNTIME)
